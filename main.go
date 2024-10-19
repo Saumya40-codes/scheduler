@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/Saumya40-codes/scheduler/cmd/scheduler"
 )
@@ -14,19 +15,17 @@ func main() {
 	sched := scheduler.Create(10)
 
 	for i := 0; i < 15; i++ {
-		fmt.Println("=====================================")
-		fmt.Printf("Number of Tasks currently running: %d \n", sched.GetRunningTasks())
-		fmt.Println("=====================================")
-		fmt.Println()
 		wg.Add(1)
 		taskNum := i
 		sched.Run(func(params ...int) {
 			defer wg.Done()
-			fmt.Println("*************************************")
+			time.Sleep(100 * time.Millisecond)
 			fmt.Printf("Task %d is executed\n", taskNum)
-			fmt.Println("*************************************")
-			fmt.Println()
 		}, taskNum)
+
+		fmt.Println("=====================================")
+		fmt.Printf("Number of Tasks currently running: %d\n", sched.GetRunningTasks())
+		fmt.Println("=====================================")
 	}
 
 	wg.Wait()
