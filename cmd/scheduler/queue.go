@@ -4,7 +4,7 @@ import "sync"
 
 type Queue struct {
 	size  int
-	queue []int
+	queue [](func(...int))
 	mu    sync.Mutex
 }
 
@@ -18,12 +18,12 @@ func CreateQueue(size int) *Queue {
 
 	return &Queue{
 		size:  size,
-		queue: make([]int, 0, size),
+		queue: make([](func(...int)), 0, size),
 	}
 }
 
 // Enqueue adds a task to the queue
-func (q *Queue) Enqueue(task int) bool {
+func (q *Queue) Enqueue(task func(params ...int)) bool {
 	q.mu.Lock()
 	defer q.mu.Unlock()
 
@@ -36,12 +36,12 @@ func (q *Queue) Enqueue(task int) bool {
 }
 
 // Dequeue removes and returns the task at the front of the queue
-func (q *Queue) Dequeue() (int, bool) {
+func (q *Queue) Dequeue() (func(...int), bool) {
 	q.mu.Lock()
 	defer q.mu.Unlock()
 
 	if len(q.queue) == 0 {
-		return 0, false // Queue is empty
+		return nil, false // Queue is empty
 	}
 
 	task := q.queue[0]
@@ -50,7 +50,7 @@ func (q *Queue) Dequeue() (int, bool) {
 }
 
 // GetTasks returns all tasks in the queue
-func (q *Queue) GetTasks() []int {
+func (q *Queue) GetTasks() [](func(...int)) {
 	q.mu.Lock()
 	defer q.mu.Unlock()
 
@@ -66,12 +66,12 @@ func (q *Queue) GetSize() int {
 }
 
 // Peek returns the task at the front of the queue without removing it
-func (q *Queue) Peek() (int, bool) {
+func (q *Queue) Peek() (func(...int), bool) {
 	q.mu.Lock()
 	defer q.mu.Unlock()
 
 	if len(q.queue) == 0 {
-		return 0, false // Queue is empty
+		return nil, false // Queue is empty
 	}
 
 	return q.queue[0], true
